@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Kittens.Views.MenuPage">
+
+    <ScrollView>
+        <Grid>
+            <!-- both children default to cell (0,0). Overlaid. -->
+            <Image Source="background2.png"
+                   Aspect="AspectFill"
+                   SemanticProperties.Description="Background" />
+            <!-- nested grid. OR StackLayout, etc. -->
+            <VerticalStackLayout HorizontalOptions="Center"
+                                 VerticalOptions="Start">
+                <Label
+                    Text="Меню"
+                    SemanticProperties.HeadingLevel="Level1"
+                    FontSize="90"
+                    FontAttributes="Bold"
+                    Margin="80"
+                    TextColor="White" />
+
+                <VerticalStackLayout VerticalOptions="Center">
+                    <Button
+                        x:Name="StartNewGameBtn"
+                        Text="Начать игру"
+                        SemanticProperties.Hint="Start game"
+                        Clicked="OnStartGameClicked"
+                        Margin="10"
+                        FontSize="30"
+                        BackgroundColor="White"
+                        TextColor="Black"
+                        HeightRequest="100"
+                        WidthRequest="350" />
+
+                    <Button
+                        x:Name="RulesBtn"
+                        Text="Правила"
+                        SemanticProperties.Hint="Rules"
+                        Clicked="OnRulesClicked"
+                        Margin="10"
+                        FontSize="30"
+                        BackgroundColor="White"
+                        TextColor="Black"
+                        HeightRequest="100"
+                        WidthRequest="350" />
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+        </Grid>
+    </ScrollView>
+
+</ContentPage>

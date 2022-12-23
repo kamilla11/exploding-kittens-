@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Kittens.Views.MainPage">
+
+    <ScrollView>
+        <!-- single cell grid filling its parent. -->
+<Grid >
+  <!-- both children default to cell (0,0). Overlaid. -->
+  <Image  Source="background.jpg" 
+                Aspect="AspectFill" 
+                SemanticProperties.Description="Background" />
+  <!-- nested grid. OR StackLayout, etc. -->
+  <Grid  >
+   <Button
+                x:Name="StartBtn"
+                Text="Старт"
+                SemanticProperties.Hint="Start the game"
+                Clicked="OnStartClicked"
+                HorizontalOptions="Center"
+                VerticalOptions="End"
+                Margin="70"
+                FontSize="30"
+                BackgroundColor="White"
+                TextColor="Black"
+                HeightRequest="100"
+                WidthRequest="200" />
+  </Grid>
+</Grid>
+    </ScrollView>
+
+</ContentPage>
+
