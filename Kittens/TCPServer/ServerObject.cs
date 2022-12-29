@@ -1,12 +1,14 @@
 ﻿using System.Net;
 using System.Net.Sockets;
+using Protocol;
+using Protocol.Converter;
 
 namespace TCPServer;
 
 public class ServerObject
 {
     private readonly Socket _socket;
-    private readonly List<ClientObject> _clients;
+    internal readonly List<ClientObject> _clients;
 
     private bool _listening;
     private bool _stopListening;
@@ -42,7 +44,7 @@ public class ServerObject
         _listening = false;
     }
     
-    public void AcceptClients()
+    public async Task AcceptClients()
     {
         while (true)
         {
@@ -55,14 +57,26 @@ public class ServerObject
 
             try
             {
-                client = _socket.Accept();
+                client = await _socket.AcceptAsync();
             } 
-            catch { return; }
+            catch(Exception ex) {Console.WriteLine(ex.Message); return; }
 
             Console.WriteLine($"[!] Accepted client from {(IPEndPoint) client.RemoteEndPoint}");
-
             var c = new ClientObject(client,this);
-            _clients.Add(c);
+            if (_clients.Count < 2)
+            {
+                _clients.Add(c);
+                Task.Run(() => c.ProcessIncomingPackets());
+            }
+            else
+            {
+                c.ProcessFailConnect(PacketConverter.Serialize(PacketType.FailConnect, new PacketFailConnect()
+                {
+                    Exception = "К игре могут присоединиться только 2 игрока"
+                }));
+            }
+            
+            
         }
     }
 
@@ -72,9 +86,7 @@ public class ServerObject
         try
         {
             using Socket tcpListener = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            IPEndPoint ipPoint = new IPEndPoint(IPAddress.Any, 8888);
-            tcpListener.Bind(ipPoint);   // связываем с локальной точкой ipPoint
-            tcpListener.Listen();
+            IPEndPoint ipPoint = new IPEndP
             Console.WriteLine("Сервер запущен. Ожидание подключений...");
 
             while (true)
@@ -89,7 +101,9 @@ public class ServerObject
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            oint(IPAddress.Any, 8888);
+            tcpListener.Bind(ipPoint);   // связываем с локальной точкой ipPoint
+            tcpListener.Listen();Console.WriteLine(ex.Message);
         }
         finally
         {

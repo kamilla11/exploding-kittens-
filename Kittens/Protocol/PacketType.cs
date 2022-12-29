@@ -4,6 +4,7 @@ public enum PacketType
 {
     Unknown,
     Handshake,
-    Connect
+    Connect,
+    FailConnect
     
 }

@@ -11,107 +11,86 @@ public class ClientObject
     protected internal string UserName { get; set; }
     Socket client;
     ServerObject server; // объект сервера
-    private readonly Queue<byte[]> _packetSendingQueue = new Queue<byte[]>();
 
     public ClientObject(Socket tcpClient, ServerObject serverObject)
     {
         client = tcpClient;
         server = serverObject;
-        
-        Task.Run((Action) ProcessIncomingPackets);
-        Task.Run((Action) SendPackets);
     }
 
-    private void ProcessIncomingPackets()
+    public async Task ProcessIncomingPackets()
+    {
+        while (true) // Слушаем пакеты, пока клиент не отключится.
         {
-            while (true) // Слушаем пакеты, пока клиент не отключится.
+            var buff = new byte[256]; // Максимальный размер пакета - 256 байт.
+            await client.ReceiveAsync(buff,SocketFlags.None);
+
+            buff = buff.TakeWhile((b, i) =>
             {
-                var buff = new byte[256]; // Максимальный размер пакета - 256 байт.
-                client.Receive(buff);
+                if (b != 0xFF) return true;
+                return buff[i + 1] != 0;
+            }).Concat(new byte[] {0xFF, 0}).ToArray();
 
-                buff = buff.TakeWhile((b, i) =>
-                {
-                    if (b != 0xFF) return true;
-                    return buff[i + 1] != 0;
-                }).Concat(new byte[] {0xFF, 0}).ToArray();
+            var parsed = Packet.Parse(buff);
 
-                var parsed = Packet.Parse(buff);
-
-                if (parsed != null)
-                {
-                    ProcessIncomingPacket(parsed);
-                }
+            if (parsed != null)
+            {
+                ProcessIncomingPacket(parsed);
             }
         }
+    }
 
-        private void ProcessIncomingPacket(Packet packet)
+    private void ProcessIncomingPacket(Packet packet)
+    {
+        var type = PacketTypeManager.GetTypeFromPacket(packet);
+
+        switch (type)
         {
-            var type = PacketTypeManager.GetTypeFromPacket(packet);
-
-            switch (type)
-            {
-                case PacketType.Handshake:
-                    ProcessHandshake(packet);
-                    break;
-                case PacketType.Unknown:
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+            case PacketType.Handshake:
+                ProcessHandshake(packet);
+                break;
+            case PacketType.FailConnect:
+                ProcessFailConnect(packet);
+                break;
+            case PacketType.Unknown:
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
         }
+    }
 
-        private void ProcessHandshake(Packet packet)
-        {
-            Console.WriteLine("Recieved handshake packet.");
+    private void ProcessHandshake(Packet packet)
+    {
+        byte[] newPacket = new byte[1];
 
-            var handshake = PacketConverter.Deserialize<PacketHandshake>(packet);
-            handshake.MagicHandshakeNumber -= 15;
-            handshake.Id = Id;
-            UserName = handshake.UserName;
-            
-            
-            Console.WriteLine($"Answering handshake packet for user: Id = {Id} UserName = {UserName}");
+        Console.WriteLine("Recieved handshake packet.");
 
-            QueuePacketSend(PacketConverter.Serialize(PacketType.Handshake, handshake).ToPacket());
-        }
+        var handshake = PacketConverter.Deserialize<PacketHandshake>(packet);
+        handshake.MagicHandshakeNumber -= 15;
+        handshake.Id = Id;
+        UserName = handshake.UserName;
+
+
+        Console.WriteLine("Answering..");
+        newPacket = PacketConverter.Serialize(PacketType.Handshake, handshake).ToPacket();
         
-        private void Process(Packet packet)
+        
+        if (newPacket.Length > 256)
         {
-            Console.WriteLine("Recieved handshake packet.");
-
-            var handshake = PacketConverter.Deserialize<PacketHandshake>(packet);
-            handshake.MagicHandshakeNumber -= 15;
-            
-            
-            Console.WriteLine("Answering..");
-
-            QueuePacketSend(PacketConverter.Serialize(PacketType.Handshake, handshake).ToPacket());
+            throw new Exception("Max packet size is 256 bytes.");
         }
 
-        public void QueuePacketSend(byte[] packet)
+        client.Send(newPacket, SocketFlags.None);
+    }
+    public void ProcessFailConnect(Packet packet)
+    {
+        
+        var newPacket = packet.ToPacket();
+        if (newPacket.Length > 256)
         {
-            if (packet.Length > 256)
-            {
-                throw new Exception("Max packet size is 256 bytes.");
-            }
-
-            _packetSendingQueue.Enqueue(packet);
+            throw new Exception("Max packet size is 256 bytes.");
         }
 
-        private void SendPackets()
-        {
-            while (true)
-            {
-                if (_packetSendingQueue.Count == 0)
-                {
-                    Thread.Sleep(100);
-                    continue;
-                }
-
-                var packet = _packetSendingQueue.Dequeue();
-                client.Send(packet);
-
-                Thread.Sleep(100);
-            }
-        }
+        client.Send(newPacket, SocketFlags.None);
+    }
 }

@@ -1,12 +1,13 @@
 ﻿using System.Net;
 using System.Net.Sockets;
+using Protocol;
+using Protocol.Converter;
 
 namespace TCPClient;
 
 public class Client
 {
-    public Action<byte[]> OnPacketRecieve { get; set; }
-    private readonly Queue<byte[]> _packetSendingQueue = new();
+    private int _handshakeMagic;
     public string UserName { get; set; }
 
     private Socket _socket;
@@ -29,26 +30,16 @@ public class Client
         _socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         _socket.Connect(_serverEndPoint);
 
-        Task.Run((Action) RecievePackets);
-        Task.Run((Action) SendPackets);
+        Task.Run(() => RecievePackets());
     }
+    
 
-    public void QueuePacketSend(byte[] packet)
-    {
-        if (packet.Length > 256)
-        {
-            throw new Exception("Max packet size is 256 bytes.");
-        }
-
-        _packetSendingQueue.Enqueue(packet);
-    }
-
-    private void RecievePackets()
+    private async Task RecievePackets()
     {
         while (true)
         {
             var buff = new byte[256];
-            _socket.Receive(buff);
+            await _socket.ReceiveAsync(buff,SocketFlags.None);
 
             buff = buff.TakeWhile((b, i) =>
             {
@@ -56,24 +47,56 @@ public class Client
                 return buff[i + 1] != 0;
             }).Concat(new byte[] {0xFF, 0}).ToArray();
 
-            OnPacketRecieve?.Invoke(buff);
+            OnPacketRecieve(buff);
         }
     }
 
-    private void SendPackets()
+    public void SendPacket(Packet packet)
     {
-        while (true)
+        _socket.Send(packet.ToPacket());
+    }
+    
+    private void OnPacketRecieve(byte[] packet)
+    {
+        var parsed = Packet.Parse(packet);
+
+        if (parsed != null)
         {
-            if (_packetSendingQueue.Count == 0)
-            {
-                Thread.Sleep(100);
-                continue;
-            }
-
-            var packet = _packetSendingQueue.Dequeue();
-            _socket.Send(packet);
-
-            Thread.Sleep(100);
+            ProcessIncomingPacket(parsed);
         }
+    }
+
+    private void ProcessIncomingPacket(Packet packet)
+    {
+        var type = PacketTypeManager.GetTypeFromPacket(packet);
+
+        switch (type)
+        {
+            case PacketType.Handshake:
+                ProcessHandshake(packet);
+                break;
+            case PacketType.Unknown:
+                break;
+            case PacketType.FailConnect:
+                ProcessFailConnect(packet);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
+    private void ProcessHandshake(Packet packet)
+    {
+        var handshake = PacketConverter.Deserialize<PacketHandshake>(packet);
+
+        if (_handshakeMagic - handshake.MagicHandshakeNumber == 15)
+        {
+            Console.WriteLine($"Handshake successful! Player Id = {handshake.Id}");
+        }
+    }
+    private void ProcessFailConnect(Packet packet)
+    {
+        var failConnect = PacketConverter.Deserialize<PacketFailConnect>(packet);
+
+        Console.WriteLine(failConnect.Exception);
     }
 }

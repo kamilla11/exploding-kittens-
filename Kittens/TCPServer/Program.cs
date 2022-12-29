@@ -4,10 +4,10 @@ using TCPServer;
 
 internal class Program
 {
-    private static void Main()
+    private async static Task Main()
     {
         var server = new ServerObject();
         server.Start();
-        server.AcceptClients();
+        await server.AcceptClients();
     }
 }
