@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Kittens.Views.RulesPage">
+
+
+    <FlexLayout Direction="Row" JustifyContent="SpaceBetween"  AlignItems="Center" Margin="30">
+        <ImageButton  
+                Source="arrow_left.png"
+                 Clicked="OnLeftClicked"
+                 HeightRequest="200"
+                 WidthRequest="200"/>
+
+
+        <Grid FlexLayout.Grow="1">
+            <ScrollView VerticalOptions="FillAndExpand">
+
+                <Image x:Name="ImageView1" 
+                   Aspect="AspectFill"
+                   SemanticProperties.Description="Background" />
+
+            </ScrollView>
+        </Grid>
+
+
+        <ImageButton 
+                    Source="arrow_right.png"
+                    Clicked="OnRightClicked"
+                    HeightRequest="200"
+                    WidthRequest="200"/>
+    </FlexLayout>
+
+
+</ContentPage>
