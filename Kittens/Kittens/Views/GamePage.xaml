@@ -5,10 +5,70 @@
              x:DataType="viewmodel:GameViewModel"
              x:Class="Kittens.Views.GamePage"
              Title="{Binding Title}">
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
+    <Shell.BackButtonBehavior>
+        <BackButtonBehavior IsEnabled="False" IsVisible="False"/>
+    </Shell.BackButtonBehavior>
+    <VerticalStackLayout
+        HorizontalOptions="Center"
+        VerticalOptions="Center">
+
+        <Grid
+           BackgroundColor="#660c0c"
+            x:Name="table">
+            <VerticalStackLayout Margin="20"  >
+
+
+                <VerticalStackLayout >
+                    <Image Source="player.png" WidthRequest="130" HeightRequest="130"></Image>
+                    <HorizontalStackLayout x:Name="opponent_cards" HorizontalOptions="Center">
+                        <Image Source="card_back.png" HeightRequest="70"></Image>
+                    </HorizontalStackLayout>
+                </VerticalStackLayout>
+
+
+                <HorizontalStackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="40" >
+                    <Image Source="deck.png" HeightRequest="350" WidthRequest="250"></Image>
+                    <Image Source="random_card" HeightRequest="300" WidthRequest="200"></Image>
+                </HorizontalStackLayout>
+
+
+                <Frame BorderColor="LightGray"
+                       HasShadow="True"
+                       CornerRadius="12">
+                    <Frame.Background>
+                        <SolidColorBrush Color="LightGray"/>
+                    </Frame.Background>
+                    <HorizontalStackLayout  HorizontalOptions="Center">
+                        <Image Source="random_card" HeightRequest="300" WidthRequest="200"></Image>
+                        <Image Source="random_card" HeightRequest="300" WidthRequest="200"></Image>
+                        <Image Source="random_card" HeightRequest="300" WidthRequest="200"></Image>
+                    </HorizontalStackLayout>
+                </Frame>
+
+            </VerticalStackLayout>
+        </Grid>
+
+
+        <Border Padding="20" WidthRequest="250" StrokeShape="RoundRectangle 10" x:Name="login_form">
+
+            <VerticalStackLayout Spacing="10"
+                VerticalOptions="Center"
+                HorizontalOptions="Center">
+                <Label
+                    FontSize="20"
+                    Text="Введите данные"
+                    VerticalOptions="Center" 
+                    HorizontalOptions="Center" />
+                <Entry
+                    x:Name="NicknameEntr"
+                    Placeholder="никнэйм"/>
+                <Entry
+                    x:Name="EmailEntr"
+                    Placeholder="почта"/>
+                <Button Text="Ok" FontSize="17" Clicked="OnOkClickedAsync"></Button>
+            </VerticalStackLayout>
+
+        </Border>
+
     </VerticalStackLayout>
 </ContentPage>

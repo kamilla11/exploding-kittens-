@@ -51,9 +51,12 @@
 	<ItemGroup>
 	  <None Remove="Model\" />
 	  <None Remove="CommunityToolkit.Mvvm" />
+	  <None Remove="Resources\Images\table.jpg" />
+	  <None Remove="Resources\Images\" />
 	</ItemGroup>
 	<ItemGroup>
 	  <Folder Include="Model\" />
+	  <Folder Include="Resources\Images\" />
 	</ItemGroup>
 	<ItemGroup>
 	  <MauiXaml Update="Views\RulesPage.xaml">
@@ -70,9 +73,9 @@
 	  </MauiXaml>
 	</ItemGroup>
 	<ItemGroup>
-	  <BundleResource Include="Resources\Images\rule6.png" />
+	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.0.0" />
 	</ItemGroup>
 	<ItemGroup>
-	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.0.0" />
+	  <ProjectReference Include="..\KittensLibrary\KittensLibrary.csproj" />
 	</ItemGroup>
 </Project>

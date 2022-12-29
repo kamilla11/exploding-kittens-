@@ -1,26 +1,29 @@
-﻿namespace KittensLibrary;
-
-public class Card : CardType
+﻿using System;
+namespace KittensLibrary
 {
-    public string Img { get; set; }
-}
+	public enum CardType
+	{
+		Defuse,
+        ExplodingKitten,
+        Attack,
+		Skip,
+		Nope,
+		Shuffle,
+		Steal,
+		SeeTheFuture
+		
+	}
+	public class Card
+	{
+		public string? Name { get; set; }
+		public CardType Type { get; set; }
+		public string? Img { get; set; }
 
-public class CardType
-{
-    public CardName CardName { get; set; }
-    public string? Icon { get; set; }
-    public string? Description { get; set; }
-}
-
-public enum CardName
-{
-    Attack,
-    Defuse,
-    Nope,
-    Shuffle,
-    Skip,
-    Kitten,
-    ExplodingKitten,
-    SeeTheFuture,
-    Favor
+		public Card(string name, CardType type, string img)
+		{
+			Name = name;
+			Type = type;
+			Img = img;
+		}
+	}
 }
