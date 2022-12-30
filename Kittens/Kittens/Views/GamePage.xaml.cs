@@ -6,6 +6,7 @@ using Kittens.ViewModel;
 using KittensLibrary;
 //using static Java.Util.Jar.Attributes;
 using Kittens.Services;
+using CommunityToolkit.Maui.Views;
 
 namespace Kittens.Views;
 
@@ -22,8 +23,10 @@ public partial class GamePage : ContentPage
 	{
 		InitializeComponent();
         table.IsVisible = false;
-        BindingContext = gameViewModel;
+        BindingContext = new GameViewModel();
+       // BindingContext = gameViewModel;
         _gameViewModel = gameViewModel;
+       
     }
 
     private void OnOkClickedAsync(object sender, EventArgs e)
@@ -40,7 +43,10 @@ public partial class GamePage : ContentPage
         table.IsVisible = true;  
     }
 
-
+    public void SeeTheFuture(Card card1, Card card2, Card card3)
+    {
+        this.ShowPopup(new FuturePopUpPage());
+    }
 
     //async Task SendMessageAsync(StreamWriter writer, string message)
     //{

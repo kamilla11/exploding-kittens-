@@ -10,7 +10,8 @@ namespace KittensLibrary
 		Nope,
 		Shuffle,
 		Steal,
-		SeeTheFuture
+		SeeTheFuture,
+		Back
 		
 	}
 	public class Card
