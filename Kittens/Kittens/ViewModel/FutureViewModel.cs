@@ -5,7 +5,7 @@ using System.Collections.ObjectModel;
 
 namespace Kittens.ViewModel
 {
-	public class FutureViewModel: BaseViewModel
+	public partial class FutureViewModel: BaseViewModel
 	{
         [ObservableProperty]
         ObservableCollection<Card> cards;

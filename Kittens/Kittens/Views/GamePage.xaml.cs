@@ -43,10 +43,10 @@ public partial class GamePage : ContentPage
         table.IsVisible = true;  
     }
 
-    public void SeeTheFuture(Card card1, Card card2, Card card3)
+   /* public void SeeTheFuture(Card card1, Card card2, Card card3)
     {
         this.ShowPopup(new FuturePopUpPage());
-    }
+    }*/
 
     //async Task SendMessageAsync(StreamWriter writer, string message)
     //{

@@ -26,5 +26,9 @@ namespace KittensLibrary
 			Type = type;
 			Img = img;
 		}
-	}
+
+        public Card()
+        {
+        }
+    }
 }
