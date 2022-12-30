@@ -8,6 +8,11 @@ public static class PacketTypeManager
         RegisterType(PacketType.Handshake,1);
         RegisterType(PacketType.FailConnect, 2);
         RegisterType(PacketType.StartGame, 3);
+        RegisterType(PacketType.ActionCard, 4);
+        RegisterType(PacketType.SeeTheFuture, 5);
+        RegisterType(PacketType.PlayerState, 6);
+        RegisterType(PacketType.TakeCard, 7);
+        RegisterType(PacketType.ExplodingKitten, 8);
     }
     
     private static readonly Dictionary<PacketType,byte> TypeDictionary = new ();

@@ -3,7 +3,6 @@
 public enum State
 {
     WaitGame,
-    StartGame,
     Win,
     Lose,
     Play,
@@ -23,6 +22,15 @@ public class Player
     {
         Nickname = nickname;
         Email = email;
+        State = State.WaitGame;
+    }
+    public Player(string id, string nickname, string email, List<Card> cards, State state)
+    {
+        Id = id;
+        Nickname = nickname;
+        Email = email;
+        Cards = cards;
+        State = state;
     }
 }
 

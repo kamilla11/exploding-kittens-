@@ -1,5 +1,7 @@
 ﻿using System.Net;
 using System.Net.Sockets;
+using GameLogic;
+using KittensLibrary;
 using Protocol;
 using Protocol.Converter;
 using Protocol.Packets;
@@ -79,63 +81,20 @@ public class ServerObject
             }
             if (_clients.Count == 2)
             {
-                foreach (var cl in _clients) 
-                {
-                    cl.ProcessStartGame(PacketConverter.Serialize(PacketType.StartGame, new PacketStartGame() { Status = "Идет подготовка игры" }));
-                }
+                var game = new Game();
+                _clients[0].Game = game;
+                _clients[1].Game = game;
+                _clients[0].State = State.Play;
+                var playerCards1 = game.GetCardsForPlayer();
+                game.playersCards.Add(_clients[0].Id, playerCards1);
+                _clients[0].ProcessStartGame(PacketConverter.Serialize(PacketType.StartGame, new PacketStartGame() { Player = new Player(_clients[0].Id, _clients[0].UserName, _clients[0].Email, playerCards1, State.Play), OtherPlayerCardsCount = 8 }));
+                var playerCards2 = game.GetCardsForPlayer();
+                _clients[1].State = State.Wait;
+                game.playersCards.Add(_clients[1].Id, playerCards2);
+                _clients[1].ProcessStartGame(PacketConverter.Serialize(PacketType.StartGame, new PacketStartGame() { Player = new Player(_clients[1].Id, _clients[1].UserName, _clients[0].Email, playerCards2, State.Wait), OtherPlayerCardsCount = 8 }));
+
             }
             
         }
     }
-
-    
-    /*protected internal async Task ListenAsync()
-    {
-        try
-        {
-            using Socket tcpListener = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            IPEndPoint ipPoint = new IPEndP
-            Console.WriteLine("Сервер запущен. Ожидание подключений...");
-
-            while (true)
-            {
-                var tcpClient = await tcpListener.AcceptAsync();
-                
-                ClientObject clientObject = new ClientObject(tcpClient, this);
-                
-                clients.Add(clientObject.Id, clientObject);
-                Task.Run(clientObject.ProcessAsync);
-            }
-        }
-        catch (Exception ex)
-        {
-            oint(IPAddress.Any, 8888);
-            tcpListener.Bind(ipPoint);   // связываем с локальной точкой ipPoint
-            tcpListener.Listen();Console.WriteLine(ex.Message);
-        }
-        finally
-        {
-            Disconnect();
-        }
-    }
-
-    // трансляция сообщения подключенным клиентам
-    protected internal async Task BroadcastMessageAsync(string message, string id)
-    {
-        foreach (var client in clients)
-        {   
-            await client.Writer.WriteLineAsync(message); //передача данных
-            await client.Writer.FlushAsync();
-        }
-    }
-
-    // отключение всех клиентов
-    protected internal void Disconnect()
-    {
-        foreach (var (id, client) in clients)
-        {
-            client.Close(); //отключение клиента
-        }
-        tcpListener.Stop(); //остановка сервера
-    }*/
 }

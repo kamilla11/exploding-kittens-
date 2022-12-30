@@ -7,7 +7,6 @@ namespace Kittens;
 
 public class Client
 {
-    private int _handshakeMagic;
 
     private Socket _socket;
     private IPEndPoint _serverEndPoint;
@@ -18,7 +17,6 @@ public class Client
     public Client(Action<byte[]> onPacketRecieve)
     {
         OnPacketRecieve = onPacketRecieve;
-        _handshakeMagic = new Random().Next();
     }
 
     public void Connect(string ip, int port)
