@@ -8,7 +8,6 @@ using System.Text.Json;
 using Protocol.Converter;
 using Protocol;
 using Protocol.Packets;
-using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace Kittens.ViewModel;
 
@@ -133,33 +132,47 @@ public partial class GameViewModel: BaseViewModel
             case PacketType.StartGame:
                 ProcessStartGame(packet);
                 break;
+            case PacketType.SeeTheFuture:
+                ProcessSeeTheFuture(packet);
+                break;
+            case PacketType.PlayerState:
+                ProcessPlayerState(packet);
+                break;
             case PacketType.Unknown:
                 break;
+            
             default:
                 throw new ArgumentOutOfRangeException();
         }
     }
+    private void ProcessPlayerState(Packet packet)
+    {
+        var playerState = PacketConverter.Deserialize<PacketPlayerState>(packet);
+        _player.Cards = playerState.Cards;
+        _player.State = playerState.PlayerState;
+        _otherCardsCount = playerState.OtherPlayerCardsCount;
+    }
 
+    private void ProcessSeeTheFuture(Packet packet)
+    {
+        var threeCards = PacketConverter.Deserialize<PacketSeeTheFuture>(packet);
+    }
     private void ProcessHandshake(Packet packet)
     {
-        var handshake = PacketConverter.Deserialize<PacketHandshake>(packet);
-        _player.Id = handshake.Id;
-        Status = "Успешное подключение, ожидаем еще одного игрока";
-        
+        Status = "Успешное подключение, ожидаем еще одного игрока";    
     }
 
     private void ProcessFailConnect(Packet packet)
     {
         var failConnect = PacketConverter.Deserialize<PacketFailConnect>(packet);
-
         Status = $"{failConnect.Exception}";
     }
 
     private void ProcessStartGame(Packet packet)
     {
-        var failConnect = PacketConverter.Deserialize<PacketStartGame>(packet);
-        Status = $"{failConnect.Status}";
-        _player.State = State.StartGame;
+        var startGame = PacketConverter.Deserialize<PacketStartGame>(packet);
+        _player = startGame.Player;
+        _otherCardsCount = startGame.OtherPlayerCardsCount;
     }
 
     //[RelayCommand]

@@ -5,6 +5,11 @@ public enum PacketType
     Unknown,
     Handshake,
     FailConnect,
-    StartGame
+    StartGame,
+    ActionCard,
+    SeeTheFuture,
+    PlayerState,
+    TakeCard,
+    ExplodingKitten
     
 }

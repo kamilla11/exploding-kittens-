@@ -8,9 +8,8 @@ using System.Threading.Tasks;
 
 namespace Protocol.Packets
 {
-    public class PacketStartGame
+    public class PacketExplodingKitten
     {
-        [Field(0)] public Player Player;
-        [Field(1)] public int OtherPlayerCardsCount;
+        [Field(0)] public State State;
     }
 }
