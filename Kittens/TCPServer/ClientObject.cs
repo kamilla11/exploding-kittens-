@@ -1,5 +1,6 @@
 ﻿using System.Net.Sockets;
 using System.Text.Json;
+using GameLogic;
 using Protocol;
 using Protocol.Converter;
 
@@ -9,6 +10,10 @@ public class ClientObject
 {
     protected internal string Id { get; } = Guid.NewGuid().ToString();
     protected internal string UserName { get; set; }
+    protected internal string Email { get; set; }
+
+    protected internal Game Game { get; set; }
+
     Socket client;
     private readonly Queue<byte[]> _packetSendingQueue = new Queue<byte[]>();
     ServerObject server; // объект сервера
@@ -67,8 +72,8 @@ public class ClientObject
     private void ProcessHandshake(Packet packet)
     {
         var handshake = PacketConverter.Deserialize<PacketHandshake>(packet);
-        handshake.Id = Id;
         UserName = handshake.UserName;
+        Email = handshake.Email;
         QueuePacketSend(PacketConverter.Serialize(PacketType.Handshake,handshake).ToPacket());
     }
 
