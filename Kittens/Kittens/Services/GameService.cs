@@ -7,8 +7,8 @@ public class GameService
         
     }
 
-    public async Task<IEnumerable<ViewModel.Player>>   GetPlayers()
+    /*public async Task<IEnumerable<ViewModel.Players>>   GetPlayers()
     {
         return null;
-    }
+    }*/
 }

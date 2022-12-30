@@ -2,6 +2,8 @@
 
 public enum State
 {
+    WaitGame,
+    StartGame,
     Win,
     Lose,
     Play,
@@ -10,6 +12,7 @@ public enum State
 
 public class Player
 {
+    public string Id { get; set; }
     public string Nickname { get; set; }
     public string Email { get; set; }
     public List<Card> Cards { get; set; }

@@ -77,5 +77,6 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <ProjectReference Include="..\KittensLibrary\KittensLibrary.csproj" />
+	  <ProjectReference Include="..\Protocol\Protocol.csproj" />
 	</ItemGroup>
 </Project>
