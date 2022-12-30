@@ -2,6 +2,7 @@
 using System.Net.Sockets;
 using Protocol;
 using Protocol.Converter;
+using Protocol.Packets;
 
 namespace TCPServer;
 
@@ -44,7 +45,7 @@ public class ServerObject
         _listening = false;
     }
     
-    public async Task AcceptClients()
+    public void AcceptClients()
     {
         while (true)
         {
@@ -57,7 +58,7 @@ public class ServerObject
 
             try
             {
-                client = await _socket.AcceptAsync();
+                client = _socket.Accept();
             } 
             catch(Exception ex) {Console.WriteLine(ex.Message); return; }
 
@@ -74,8 +75,15 @@ public class ServerObject
                 {
                     Exception = "К игре могут присоединиться только 2 игрока"
                 }));
+                c.Close();
             }
-            
+            if (_clients.Count == 2)
+            {
+                foreach (var cl in _clients) 
+                {
+                    cl.ProcessStartGame(PacketConverter.Serialize(PacketType.StartGame, new PacketStartGame() { Status = "Идет подготовка игры" }));
+                }
+            }
             
         }
     }

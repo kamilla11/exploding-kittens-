@@ -8,6 +8,6 @@ internal class Program
     {
         var server = new ServerObject();
         server.Start();
-        await server.AcceptClients();
+        server.AcceptClients();
     }
 }

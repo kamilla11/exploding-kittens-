@@ -10,20 +10,25 @@ public class ClientObject
     protected internal string Id { get; } = Guid.NewGuid().ToString();
     protected internal string UserName { get; set; }
     Socket client;
+    private readonly Queue<byte[]> _packetSendingQueue = new Queue<byte[]>();
     ServerObject server; // объект сервера
 
     public ClientObject(Socket tcpClient, ServerObject serverObject)
     {
         client = tcpClient;
         server = serverObject;
+
+        Task.Run((Action)ProcessIncomingPackets);
+        Task.Run((Action)SendPackets);
     }
 
-    public async Task ProcessIncomingPackets()
+    public void ProcessIncomingPackets()
     {
+        
         while (true) // Слушаем пакеты, пока клиент не отключится.
         {
             var buff = new byte[256]; // Максимальный размер пакета - 256 байт.
-            await client.ReceiveAsync(buff,SocketFlags.None);
+            client.Receive(buff);
 
             buff = buff.TakeWhile((b, i) =>
             {
@@ -61,36 +66,49 @@ public class ClientObject
 
     private void ProcessHandshake(Packet packet)
     {
-        byte[] newPacket = new byte[1];
-
-        Console.WriteLine("Recieved handshake packet.");
-
         var handshake = PacketConverter.Deserialize<PacketHandshake>(packet);
-        handshake.MagicHandshakeNumber -= 15;
         handshake.Id = Id;
         UserName = handshake.UserName;
-
-
-        Console.WriteLine("Answering..");
-        newPacket = PacketConverter.Serialize(PacketType.Handshake, handshake).ToPacket();
-        
-        
-        if (newPacket.Length > 256)
-        {
-            throw new Exception("Max packet size is 256 bytes.");
-        }
-
-        client.Send(newPacket, SocketFlags.None);
+        QueuePacketSend(PacketConverter.Serialize(PacketType.Handshake,handshake).ToPacket());
     }
+
     public void ProcessFailConnect(Packet packet)
+    { 
+        QueuePacketSend(packet.ToPacket());
+    }
+    public void ProcessStartGame(Packet packet)
     {
-        
-        var newPacket = packet.ToPacket();
-        if (newPacket.Length > 256)
+        QueuePacketSend(packet.ToPacket());
+    }
+
+    private void SendPackets()
+    {
+        while (true)
+        {
+            if (_packetSendingQueue.Count == 0)
+            {
+                Thread.Sleep(100);
+                continue;
+            }
+
+            var packet = _packetSendingQueue.Dequeue();
+            client.Send(packet);
+
+            Thread.Sleep(100);
+        }
+    }
+    public void QueuePacketSend(byte[] packet)
+    {
+        if (packet.Length > 256)
         {
             throw new Exception("Max packet size is 256 bytes.");
         }
 
-        client.Send(newPacket, SocketFlags.None);
+        _packetSendingQueue.Enqueue(packet);
+    }
+
+    public void Close()
+    {
+        client.Close();
     }
 }

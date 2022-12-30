@@ -11,13 +11,7 @@ namespace Kittens.Views;
 
 public partial class GamePage : ContentPage
 {
-    //string Host { get; } = "127.0.0.1";
-    //int Port { get; } = 8888;
-    //TcpClient Client { get; } = new();
-    //StreamReader Reader { get; set; }
-    //StreamWriter Writer { get; set; }
-
-    private GameConnect _gameService;
+    private Action<string,Player> Action;
 
     public Player Player { get; set; }
 
@@ -30,50 +24,22 @@ public partial class GamePage : ContentPage
         table.IsVisible = false;
         BindingContext = gameViewModel;
         _gameViewModel = gameViewModel;
-        _gameService = new GameConnect();
     }
 
-    private async void OnOkClickedAsync(object sender, EventArgs e)
-    {
-        login_form.IsVisible = false;
-        table.IsVisible = true;
+    private void OnOkClickedAsync(object sender, EventArgs e)
+    {   
         Player = new Player(NicknameEntr.Text, EmailEntr.Text);
-        var player = JsonSerializer.Serialize(Player);
-       // GameService.ConnectPlayer +=
-        await _gameViewModel.ConnectToGameCommand(player, (player) => AddPlayer(player));
+        _gameViewModel.Status = "j;blfyb";
 
-        //var name = JsonSerializer.Deserialize<Player>(player).Nickname;
-        //Title += $"{name} ";
+        _gameViewModel.ConnectToGameCommand(Player.Nickname, Player);
 
-        //if (Client.Client.Connected)
-        //    return;
-
-        //login_form.IsVisible = false;
-
+        /*Action = _gameViewModel.ConnectToGameCommand;
         
-
-        //try
-        //{
-        //    Client.Connect(Host, Port); 
-        //    Reader = new StreamReader(Client.GetStream());
-        //    Writer = new StreamWriter(Client.GetStream());
-        //    if (Writer is null || Reader is null) return;
-        //    Task.Run(() => ReceiveMessageAsync(Reader));
-        //    var player = JsonSerializer.Serialize(Player);
-        //    // ��������� ���� ���������
-        //    await SendMessageAsync(Writer, player);
-        //}
-        //catch (Exception ex)
-        //{
-        //    Console.WriteLine(ex.Message);
-        //}
-
+        Task.Run(() => Action.Invoke(Player.Nickname, Player));*/
+        login_form.IsVisible = false;
+        table.IsVisible = true;  
     }
 
-    public async void AddPlayer(string name)
-    {
-        Title += $"{name} ";
-    }
 
 
     //async Task SendMessageAsync(StreamWriter writer, string message)

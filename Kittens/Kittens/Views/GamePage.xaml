@@ -67,8 +67,16 @@
                     Placeholder="почта"/>
                 <Button Text="Ok" FontSize="17" Clicked="OnOkClickedAsync"></Button>
             </VerticalStackLayout>
-
         </Border>
+        <VerticalStackLayout Spacing="10"
+                VerticalOptions="Center"
+                HorizontalOptions="Center">
+            <Label
+                    FontSize="20"
+                    Text="{Binding Status}"
+                    VerticalOptions="Center" 
+                    HorizontalOptions="Center" />
+        </VerticalStackLayout>
 
     </VerticalStackLayout>
 </ContentPage>

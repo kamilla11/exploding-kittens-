@@ -7,6 +7,7 @@ public static class PacketTypeManager
     {
         RegisterType(PacketType.Handshake,1);
         RegisterType(PacketType.FailConnect, 2);
+        RegisterType(PacketType.StartGame, 3);
     }
     
     private static readonly Dictionary<PacketType,byte> TypeDictionary = new ();
