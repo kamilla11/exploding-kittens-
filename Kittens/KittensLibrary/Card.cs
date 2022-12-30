@@ -10,7 +10,8 @@ namespace KittensLibrary
 		Nope,
 		Shuffle,
 		Steal,
-		SeeTheFuture
+		SeeTheFuture,
+		Back
 		
 	}
 	public class Card
@@ -25,5 +26,9 @@ namespace KittensLibrary
 			Type = type;
 			Img = img;
 		}
-	}
+
+        public Card()
+        {
+        }
+    }
 }
