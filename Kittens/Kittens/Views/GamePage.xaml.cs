@@ -23,30 +23,34 @@ public partial class GamePage : ContentPage
 	{
 		InitializeComponent();
         table.IsVisible = false;
-        BindingContext = new GameViewModel();
-       // BindingContext = gameViewModel;
+        //BindingContext = gameViewModel;
         _gameViewModel = gameViewModel;
-       
+        _gameViewModel.DisableFalseUI += DisableFalse;
+        _gameViewModel.DisableTrueUI += DisableTrue;
     }
 
     private void OnOkClickedAsync(object sender, EventArgs e)
     {   
-        Player = new Player(NicknameEntr.Text, EmailEntr.Text);
-        _gameViewModel.Status = "j;blfyb";
+        _gameViewModel.ConnectToGameCommand(NicknameEntr.Text, EmailEntr.Text);
 
-        _gameViewModel.ConnectToGameCommand(Player.Nickname, Player);
-
-        /*Action = _gameViewModel.ConnectToGameCommand;
-        
-        Task.Run(() => Action.Invoke(Player.Nickname, Player));*/
         login_form.IsVisible = false;
         table.IsVisible = true;  
     }
 
-   /* public void SeeTheFuture(Card card1, Card card2, Card card3)
+    public void DisableFalse()
     {
-        this.ShowPopup(new FuturePopUpPage());
-    }*/
+        gameField.IsEnabled = false;
+    }
+
+    public void DisableTrue()
+    {
+        gameField.IsEnabled = true;
+    }
+
+    /* public void SeeTheFuture(Card card1, Card card2, Card card3)
+     {
+         this.ShowPopup(new FuturePopUpPage());
+     }*/
 
     //async Task SendMessageAsync(StreamWriter writer, string message)
     //{

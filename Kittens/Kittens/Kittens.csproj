@@ -51,7 +51,6 @@
 	<ItemGroup>
 	  <None Remove="Model\" />
 	  <None Remove="CommunityToolkit.Mvvm" />
-	  <None Remove="Resources\Images\table.jpg" />
 	  <None Remove="Resources\Images\" />
 	  <None Remove="CommunityToolkit.Maui" />
 	</ItemGroup>

@@ -66,7 +66,7 @@ public class ClientObject
                 ProcessSteal(actionCard.ActionCard);
                 break;
             case "Skip":
-                ProcessSteal(actionCard.ActionCard);
+                ProcessSkip(actionCard.ActionCard);
                 break;
         }
     }
@@ -96,7 +96,8 @@ public class ClientObject
 
     public void ProcessSeeTheFuture()
     {
-        var threeCards = Game.Deck.Take(3).ToList();
+        var threeCards = Game.Deck.Take(3).Select(card => card.Type).ToList();
+        SendPacketPlayerState("See the future",false);
         QueuePacketSend(PacketConverter.Serialize(PacketType.SeeTheFuture, new PacketSeeTheFuture() { ThreeFirstCards = threeCards }).ToPacket());
     }
 
@@ -117,7 +118,7 @@ public class ClientObject
             }
             server._clients[i].State = state;
             var otherCards = i == 0 ? Game.playersCards[server._clients[1].Id].Count : Game.playersCards[server._clients[0].Id].Count;
-            server._clients[i].QueuePacketSend(PacketConverter.Serialize(PacketType.PlayerState, new PacketPlayerState() { Cards = Game.playersCards[server._clients[i].Id], OtherPlayerCardsCount = otherCards, LastResetCard = Cards.cards[cardName] , PlayerState = state }).ToPacket());
+            server._clients[i].QueuePacketSend(PacketConverter.Serialize(PacketType.PlayerState, new PacketPlayerState() { Cards = Game.playersCards[server._clients[i].Id].Select(card => card.Type).ToList(), OtherPlayerCardsCount = otherCards, LastResetCard = Cards.cards[cardName].Type , PlayerState = state }).ToPacket());
         }
 
     }

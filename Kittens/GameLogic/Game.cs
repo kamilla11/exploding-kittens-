@@ -8,7 +8,6 @@ namespace GameLogic
         
         public List<Card> Deck = new List<Card>() {
             Cards.cards["Defuse"], Cards.cards["Defuse"], Cards.cards["Defuse"], Cards.cards["Defuse"],
-            Cards.cards["Nope"], Cards.cards["Nope"], Cards.cards["Nope"], Cards.cards["Nope"], Cards.cards["Nope"],
             Cards.cards["Attack"], Cards.cards["Attack"], Cards.cards["Attack"], Cards.cards["Attack"],
             Cards.cards["Skip"], Cards.cards["Skip"], Cards.cards["Skip"],  Cards.cards["Skip"],
             Cards.cards["Shuffle"], Cards.cards["Shuffle"], Cards.cards["Shuffle"], Cards.cards["Shuffle"],
@@ -53,7 +52,7 @@ namespace GameLogic
         }
 
 
-]
+
 
     }
 }

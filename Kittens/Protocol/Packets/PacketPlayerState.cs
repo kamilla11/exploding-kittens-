@@ -10,9 +10,9 @@ namespace Protocol.Packets
 {
     public class PacketPlayerState
     {
-        [Field(0)] public List<Card> Cards;
+        [Field(0)] public List<CardType> Cards;
         [Field(1)] public int OtherPlayerCardsCount;
-        [Field(2)] public Card LastResetCard;
+        [Field(2)] public CardType LastResetCard;
         [Field(3)] public State PlayerState;
     }
 }

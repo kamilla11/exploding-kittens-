@@ -8,6 +8,8 @@ using System.Text.Json;
 using Protocol.Converter;
 using Protocol;
 using Protocol.Packets;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Maui.Core.Extensions;
 
 namespace Kittens.ViewModel;
 
@@ -23,6 +25,8 @@ public partial class GameViewModel: BaseViewModel
     public event Action NopeUI;
     public event Action ShuffleUI;
     public event Action StealUI;
+    public event Action DisableFalseUI;
+    public event Action DisableTrueUI;
 
     private Client _client;
     private Player _player;
@@ -30,6 +34,7 @@ public partial class GameViewModel: BaseViewModel
     private Card _draggedCard;
 
     private Card _backCard = new Card("back", CardType.Back, "card_back.png");
+    private int _otherCardsCount;
 
     [ObservableProperty]
     ObservableCollection<Card> playerCards;
@@ -47,35 +52,63 @@ public partial class GameViewModel: BaseViewModel
         Status = "";
         _client = new Client(OnPacketRecieve);
         PlayerCards = new ObservableCollection<Card>();
+        OtherPlayerCards = new ObservableCollection<Card>();
     }
 
-    private void UpdateOtherPlayerCards(int count)
+    private void Update()
     {
-        for (int i = 0; i < count; i++)
+        if (_player.State == State.Play)
+        {
+            Title =  $"{_player.Nickname} ходит";
+            DisableTrueUI();
+        }
+        else
+        {
+            Title = $"{_player.Nickname} ожидает";
+            DisableFalseUI();
+        }
+
+        /* PlayerCards = _player.Cards.Select(card => Cards.typeCards[card]).ToObservableCollection();*/
+        PlayerCards.Clear();
+        OtherPlayerCards.Clear();
+
+        foreach (var playerCard in _player.Cards.Select(card => Cards.typeCards[card]))
+        {
+            PlayerCards.Add(playerCard);
+        }
+
+        for (int i = 0; i < _otherCardsCount; i++)
+        {
             OtherPlayerCards.Add(_backCard);
+        }
+           
     }
 
+   
     [RelayCommand]
     public void DragStarted(Card card)
     {
         _draggedCard = card;
     }
 
+    
     [RelayCommand]
     public void DragBackStarted(Card card)
     {
         _draggedCard = card;
     }
 
+    //в сброс
     [RelayCommand]
     public void CardDropedToReset()
     {
         if(_draggedCard.Type != CardType.Back)
         {
-            //чето делаем, отправляем пакет об отправленной карте, обновляем сброс
+            _client.QueuePacketSend(PacketConverter.Serialize(PacketType.ActionCard, new PacketActionCard() { ActionCard = _draggedCard.Name }).ToPacket());
         }
     }
 
+    //в свои карты
     [RelayCommand]
     public void BackCardDroped()
     {
@@ -97,14 +130,14 @@ public partial class GameViewModel: BaseViewModel
 
     //}
 
-    public void ConnectToGameCommand(string userName, Player player)
+    public void ConnectToGameCommand(string userName, string email)
     {
-        _player = player;
+        _player = new Player(userName,email);
         Status = "Ожидание подключения";
         _client.Connect("127.0.0.1", 4910);
         
-        _client.SendHandshakePacket(userName);
-        while (_player.State != State.StartGame) { }
+        _client.SendHandshakePacket(userName, email);
+        while (_player.State != State.Play && _player.State != State.Wait) { }
     }
 
     private void OnPacketRecieve(byte[] packet)
@@ -151,6 +184,8 @@ public partial class GameViewModel: BaseViewModel
         _player.Cards = playerState.Cards;
         _player.State = playerState.PlayerState;
         _otherCardsCount = playerState.OtherPlayerCardsCount;
+        LastResetCard = Cards.typeCards[playerState.LastResetCard];
+        Update();
     }
 
     private void ProcessSeeTheFuture(Packet packet)
@@ -171,8 +206,10 @@ public partial class GameViewModel: BaseViewModel
     private void ProcessStartGame(Packet packet)
     {
         var startGame = PacketConverter.Deserialize<PacketStartGame>(packet);
-        _player = startGame.Player;
+        _player.Cards = startGame.Player.Cards;
+        _player.State = startGame.Player.State;
         _otherCardsCount = startGame.OtherPlayerCardsCount;
+        Update();
     }
 
     //[RelayCommand]

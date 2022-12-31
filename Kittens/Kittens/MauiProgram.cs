@@ -14,10 +14,10 @@ public static class MauiProgram
             fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
             fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
         }).UseMauiCommunityToolkit();
-        builder.Services.AddSingleton<GameConnect>();
-        builder.Services.AddSingleton<GameViewModel>();
-        builder.Services.AddSingleton<MainPage>();
-        builder.Services.AddSingleton<RulesPage>();
+        builder.Services.AddTransient<GameConnect>();
+        builder.Services.AddTransient<GameViewModel>();
+        builder.Services.AddTransient<MainPage>();
+        builder.Services.AddTransient<RulesPage>();
         builder.Services.AddTransient<GamePage>();
         return builder.Build();
     }

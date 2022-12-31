@@ -87,11 +87,11 @@ public class ServerObject
                 _clients[0].State = State.Play;
                 var playerCards1 = game.GetCardsForPlayer();
                 game.playersCards.Add(_clients[0].Id, playerCards1);
-                _clients[0].ProcessStartGame(PacketConverter.Serialize(PacketType.StartGame, new PacketStartGame() { Player = new Player(_clients[0].Id, _clients[0].UserName, _clients[0].Email, playerCards1, State.Play), OtherPlayerCardsCount = 8 }));
+                _clients[0].ProcessStartGame(PacketConverter.Serialize(PacketType.StartGame, new PacketStartGame() { Player = new Player(_clients[0].Id, _clients[0].UserName, _clients[0].Email, playerCards1.Select(card => card.Type).ToList(), State.Play), OtherPlayerCardsCount = 8 }));
                 var playerCards2 = game.GetCardsForPlayer();
                 _clients[1].State = State.Wait;
                 game.playersCards.Add(_clients[1].Id, playerCards2);
-                _clients[1].ProcessStartGame(PacketConverter.Serialize(PacketType.StartGame, new PacketStartGame() { Player = new Player(_clients[1].Id, _clients[1].UserName, _clients[0].Email, playerCards2, State.Wait), OtherPlayerCardsCount = 8 }));
+                _clients[1].ProcessStartGame(PacketConverter.Serialize(PacketType.StartGame, new PacketStartGame() { Player = new Player(_clients[1].Id, _clients[1].UserName, _clients[0].Email, playerCards2.Select(card => card.Type).ToList(), State.Wait), OtherPlayerCardsCount = 8 }));
 
             }
             

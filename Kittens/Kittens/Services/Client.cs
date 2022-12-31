@@ -78,9 +78,9 @@ public class Client
             Thread.Sleep(100);
         }
     }
-    public void SendHandshakePacket(string userName)
+    public void SendHandshakePacket(string userName, string email)
     {
-        QueuePacketSend(PacketConverter.Serialize(PacketType.Handshake, new PacketHandshake() { UserName = userName }).ToPacket());
+        QueuePacketSend(PacketConverter.Serialize(PacketType.Handshake, new PacketHandshake() { UserName = userName , Email = email}).ToPacket());
     }
     
     

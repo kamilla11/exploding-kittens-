@@ -14,7 +14,7 @@ public class Player
     public string Id { get; set; }
     public string Nickname { get; set; }
     public string Email { get; set; }
-    public List<Card> Cards { get; set; }
+    public List<CardType> Cards { get; set; }
     public State State { get; set; }
 
 
@@ -24,13 +24,17 @@ public class Player
         Email = email;
         State = State.WaitGame;
     }
-    public Player(string id, string nickname, string email, List<Card> cards, State state)
+    public Player(string id, string nickname, string email, List<CardType> cards, State state)
     {
         Id = id;
         Nickname = nickname;
         Email = email;
         Cards = cards;
         State = state;
+    }
+
+    public Player()
+    {
     }
 }
 

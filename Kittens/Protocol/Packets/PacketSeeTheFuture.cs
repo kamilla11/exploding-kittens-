@@ -10,6 +10,6 @@ namespace Protocol.Packets
 {
     public class PacketSeeTheFuture
     {
-        [Field(0)] public List<Card> ThreeFirstCards;
+        [Field(0)] public List<CardType> ThreeFirstCards;
     }
 }
