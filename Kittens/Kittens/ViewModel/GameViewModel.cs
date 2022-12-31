@@ -34,6 +34,10 @@ public partial class GameViewModel: BaseViewModel
     private Card _draggedCard;
 
     private Card _backCard = new Card("back", CardType.Back, "card_back.png");
+
+    [ObservableProperty]
+    List<Card> backCard = new List<Card>() { new Card("back", CardType.Back, "card_back.png") };
+
     private int _otherCardsCount;
 
     [ObservableProperty]
@@ -86,21 +90,21 @@ public partial class GameViewModel: BaseViewModel
 
    
     [RelayCommand]
-    public void DragStarted(Card card)
+    async Task DragStartedAsync(Card card)
     {
         _draggedCard = card;
     }
 
     
     [RelayCommand]
-    public void DragBackStarted(Card card)
+    async Task DragBackStartedAsync(Card card)
     {
         _draggedCard = card;
     }
 
     //в сброс
     [RelayCommand]
-    public void CardDropedToReset()
+    async Task CardDropedToResetAsync()
     {
         if(_draggedCard.Type != CardType.Back)
         {
@@ -110,11 +114,11 @@ public partial class GameViewModel: BaseViewModel
 
     //в свои карты
     [RelayCommand]
-    public void BackCardDroped()
+    async Task BackCardDropedAsync()
     {
         if (_draggedCard.Type == CardType.Back)
         {
-            //добавляем игроку новую карту из колоды
+           _client.QueuePacketSend(PacketConverter.Serialize(PacketType.TakeCard, new PacketTakeCard() { Test = 0 }).ToPacket());
         }
     }
 
@@ -171,11 +175,22 @@ public partial class GameViewModel: BaseViewModel
             case PacketType.PlayerState:
                 ProcessPlayerState(packet);
                 break;
+            case PacketType.ExplodingKitten:
+                ProcessExplodingKitten(packet);
+                break;
             case PacketType.Unknown:
                 break;
             
             default:
                 throw new ArgumentOutOfRangeException();
+        }
+    }
+
+    private void ProcessExplodingKitten(Packet packet)
+    {
+        if(_player.Cards.Contains(CardType.Defuse))
+        {
+            _client.QueuePacketSend(PacketConverter.Serialize(PacketType.ActionCard, new PacketActionCard() { ActionCard = "Defuse" }).ToPacket());
         }
     }
     private void ProcessPlayerState(Packet packet)
@@ -184,7 +199,7 @@ public partial class GameViewModel: BaseViewModel
         _player.Cards = playerState.Cards;
         _player.State = playerState.PlayerState;
         _otherCardsCount = playerState.OtherPlayerCardsCount;
-        LastResetCard = Cards.typeCards[playerState.LastResetCard];
+        LastResetCard = (playerState.LastResetCard is CardType.None)?null: Cards.typeCards[playerState.LastResetCard];
         Update();
     }
 

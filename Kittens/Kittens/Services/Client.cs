@@ -24,15 +24,15 @@ public class Client
         Connect(new IPEndPoint(IPAddress.Parse(ip),port));
     }
     
-    public void Connect(IPEndPoint server)
+    public async Task Connect(IPEndPoint server)
     {
         _serverEndPoint = server;
         
         _socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         _socket.Connect(_serverEndPoint);
 
-        Task.Run((Action)RecievePackets);
-        Task.Run((Action)SendPackets);
+        Task.Run(() => RecievePackets());
+        Task.Run(() => SendPackets());
     }
 
     public void QueuePacketSend(byte[] packet)
@@ -46,12 +46,12 @@ public class Client
     }
 
 
-    private void RecievePackets()
+    private async Task RecievePackets()
     {
         while (true)
         {
             var buff = new byte[256];
-            _socket.Receive(buff,SocketFlags.None);
+            await _socket.ReceiveAsync(buff,SocketFlags.None);
 
             buff = buff.TakeWhile((b, i) =>
             {
@@ -73,7 +73,7 @@ public class Client
             }
 
             var packet = _packetSendingQueue.Dequeue();
-            _socket.Send(packet);
+            _socket.Send(packet, SocketFlags.None);
 
             Thread.Sleep(100);
         }

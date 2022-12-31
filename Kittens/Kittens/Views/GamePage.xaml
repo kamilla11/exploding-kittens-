@@ -55,15 +55,9 @@
 
                         <HorizontalStackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="40" >
 
-                            <CollectionView>
-                                <CollectionView.ItemsSource>
-                                    <x:Array Type="{x:Type model:Card}">
-                                        <model:Card
-                                    Name="Back"
-                                    Img ="card_back.png" />
-                                    </x:Array>
-                                </CollectionView.ItemsSource>
-
+                            <CollectionView
+                                ItemsSource="{Binding BackCard}"
+                                 SelectionMode="None">
 
                                 <CollectionView.ItemTemplate>
                                     <DataTemplate x:DataType="model:Card">

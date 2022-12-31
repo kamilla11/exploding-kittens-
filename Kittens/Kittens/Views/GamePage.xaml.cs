@@ -23,7 +23,7 @@ public partial class GamePage : ContentPage
 	{
 		InitializeComponent();
         table.IsVisible = false;
-        //BindingContext = gameViewModel;
+        BindingContext = gameViewModel;
         _gameViewModel = gameViewModel;
         _gameViewModel.DisableFalseUI += DisableFalse;
         _gameViewModel.DisableTrueUI += DisableTrue;
