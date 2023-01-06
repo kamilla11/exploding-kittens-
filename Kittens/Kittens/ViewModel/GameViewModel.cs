@@ -27,6 +27,8 @@ public partial class GameViewModel: BaseViewModel
     public event Action StealUI;
     public event Action DisableFalseUI;
     public event Action DisableTrueUI;
+    public event Action LoseUi;
+    public event Action WinUI;
 
     private Client _client;
     private Player _player;
@@ -62,14 +64,22 @@ public partial class GameViewModel: BaseViewModel
             Title =  $"{_player.Nickname} ходит";
             DisableTrueUI();
         }
-        else
+        else if (_player.State == State.Wait)
         {
             Title = $"{_player.Nickname} ожидает";
             DisableFalseUI();
         }
+        else if (_player.State == State.Win)
+        {
+            WinUI();
+        }
+        else if (_player.State == State.Lose)
+        {
+            LoseUi();
+        }
 
-        /* PlayerCards = _player.Cards.Select(card => Cards.typeCards[card]).ToObservableCollection();*/
-        PlayerCards.Clear();
+            /* PlayerCards = _player.Cards.Select(card => Cards.typeCards[card]).ToObservableCollection();*/
+            PlayerCards.Clear();
         OtherPlayerCards.Clear();
 
         foreach (var playerCard in _player.Cards.Select(card => Cards.typeCards[card]))
@@ -114,7 +124,7 @@ public partial class GameViewModel: BaseViewModel
     {
         if (_draggedCard.Type == CardType.Back)
         {
-            //добавляем игроку новую карту из колоды
+            _client.QueuePacketSend(PacketConverter.Serialize(PacketType.TakeCard, new PacketTakeCard() { Test = 0 }).ToPacket());
         }
     }
 

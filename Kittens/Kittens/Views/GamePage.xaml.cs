@@ -23,10 +23,12 @@ public partial class GamePage : ContentPage
 	{
 		InitializeComponent();
         table.IsVisible = false;
-        //BindingContext = gameViewModel;
+        BindingContext = gameViewModel;
         _gameViewModel = gameViewModel;
         _gameViewModel.DisableFalseUI += DisableFalse;
         _gameViewModel.DisableTrueUI += DisableTrue;
+        _gameViewModel.LoseUi += Lose;
+        _gameViewModel.WinUI += Win;
     }
 
     private void OnOkClickedAsync(object sender, EventArgs e)
@@ -35,6 +37,16 @@ public partial class GamePage : ContentPage
 
         login_form.IsVisible = false;
         table.IsVisible = true;  
+    }
+
+    public  void Lose()
+    {
+         DisplayAlert("Конец игры!", "Вы проиграли :(", "о нет");
+    }
+
+    public void Win()
+    {
+         DisplayAlert("Конец игры!", "Вы выиграли :)", "оуда");
     }
 
     public void DisableFalse()

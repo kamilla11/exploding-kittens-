@@ -5,14 +5,23 @@ namespace GameLogic
 {
     public class Game
     {
-        
+
+        /* public List<Card> Deck = new List<Card>() {
+             Cards.cards["Defuse"], Cards.cards["Defuse"], Cards.cards["Defuse"], Cards.cards["Defuse"],
+             Cards.cards["Attack"], Cards.cards["Attack"], Cards.cards["Attack"], Cards.cards["Attack"],
+             Cards.cards["Skip"], Cards.cards["Skip"], Cards.cards["Skip"],  Cards.cards["Skip"],
+             Cards.cards["Shuffle"], Cards.cards["Shuffle"], Cards.cards["Shuffle"], Cards.cards["Shuffle"],
+             Cards.cards["Steal"], Cards.cards["Steal"], Cards.cards["Steal"], Cards.cards["Steal"],
+             Cards.cards["See the future"], Cards.cards["See the future"], Cards.cards["See the future"], Cards.cards["See the future"], Cards.cards["See the future"],
+         };*/
+
         public List<Card> Deck = new List<Card>() {
-            Cards.cards["Defuse"], Cards.cards["Defuse"], Cards.cards["Defuse"], Cards.cards["Defuse"],
-            Cards.cards["Attack"], Cards.cards["Attack"], Cards.cards["Attack"], Cards.cards["Attack"],
-            Cards.cards["Skip"], Cards.cards["Skip"], Cards.cards["Skip"],  Cards.cards["Skip"],
-            Cards.cards["Shuffle"], Cards.cards["Shuffle"], Cards.cards["Shuffle"], Cards.cards["Shuffle"],
-            Cards.cards["Steal"], Cards.cards["Steal"], Cards.cards["Steal"], Cards.cards["Steal"],
-            Cards.cards["See the future"], Cards.cards["See the future"], Cards.cards["See the future"], Cards.cards["See the future"], Cards.cards["See the future"],
+            Cards.cards["Defuse"], Cards.cards["Defuse"], 
+            Cards.cards["Attack"], Cards.cards["Attack"], 
+            Cards.cards["Skip"], Cards.cards["Skip"], Cards.cards["Skip"],  
+            Cards.cards["Shuffle"], Cards.cards["Shuffle"], Cards.cards["Shuffle"], 
+            Cards.cards["Steal"], Cards.cards["Steal"], Cards.cards["Steal"], 
+            Cards.cards["See the future"], Cards.cards["See the future"], 
         };
 
         public Stack<Card> Stack = new Stack<Card>();
@@ -36,6 +45,8 @@ namespace GameLogic
                 playerCards.Add(Deck[newCard]);
                 Deck.RemoveAt(newCard);
             }
+            Shuffle();
+            playerCards.Add(Cards.typeCards[CardType.ExplodingKitten]);
             return playerCards;
         }
 
