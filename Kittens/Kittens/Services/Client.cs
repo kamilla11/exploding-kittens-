@@ -1,4 +1,5 @@
-﻿using Protocol;
+﻿
+using Protocol;
 using Protocol.Converter;
 using System.Net;
 using System.Net.Sockets;
@@ -8,7 +9,7 @@ namespace Kittens;
 public class Client
 {
 
-    private Socket _socket;
+    public Socket _socket;
     private IPEndPoint _serverEndPoint;
     private Action<byte[]> OnPacketRecieve;
     private readonly Queue<byte[]> _packetSendingQueue = new Queue<byte[]>();
@@ -29,10 +30,19 @@ public class Client
         _serverEndPoint = server;
         
         _socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+        _socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
         _socket.Connect(_serverEndPoint);
 
-        Task.Run((Action)RecievePackets);
-        Task.Run((Action)SendPackets);
+        try
+        {
+            Task.Run(() => RecievePackets());
+            Task.Run(() => SendPackets());
+        } 
+        catch(Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
+        
     }
 
     public void QueuePacketSend(byte[] packet)
@@ -46,13 +56,14 @@ public class Client
     }
 
 
-    private void RecievePackets()
+    private async Task RecievePackets()
     {
         while (true)
         {
-            var buff = new byte[256];
-            _socket.Receive(buff,SocketFlags.None);
+            var buff = new byte[260];
+            await _socket.ReceiveAsync(buff, SocketFlags.None);
 
+           
             buff = buff.TakeWhile((b, i) =>
             {
                 if (b != 0xFF) return true;
@@ -62,20 +73,18 @@ public class Client
             OnPacketRecieve?.Invoke(buff);
         }
     }
-    private void SendPackets()
+    private async Task  SendPackets()
     {
         while (true)
         {
             if (_packetSendingQueue.Count == 0)
             {
-                Thread.Sleep(100);
                 continue;
             }
 
             var packet = _packetSendingQueue.Dequeue();
-            _socket.Send(packet);
+            await _socket.SendAsync(packet,SocketFlags.None);
 
-            Thread.Sleep(100);
         }
     }
     public void SendHandshakePacket(string userName, string email)

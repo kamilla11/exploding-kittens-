@@ -69,7 +69,7 @@ public class ServerObject
             if (_clients.Count < 2)
             {
                 _clients.Add(c);
-                Task.Run(() => c.ProcessIncomingPackets());
+                Task.Run(c.ProcessIncomingPackets);
             }
             else
             {
@@ -93,6 +93,7 @@ public class ServerObject
                 game.playersCards.Add(_clients[1].Id, playerCards2);
                 _clients[1].ProcessStartGame(PacketConverter.Serialize(PacketType.StartGame, new PacketStartGame() { Player = new Player(_clients[1].Id, _clients[1].UserName, _clients[0].Email, playerCards2.Select(card => card.Type).ToList(), State.Wait), OtherPlayerCardsCount = 8 }));
 
+                game.Deck = new List<Card>() { Cards.cards["Exploding Kitten"], Cards.cards["Exploding Kitten"], Cards.cards["Exploding Kitten"], Cards.cards["Exploding Kitten"] };
             }
             
         }

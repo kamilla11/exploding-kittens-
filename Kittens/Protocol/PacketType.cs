@@ -10,6 +10,7 @@ public enum PacketType
     SeeTheFuture,
     PlayerState,
     TakeCard,
-    ExplodingKitten
+    ExplodingKitten,
+    EndGame
     
 }

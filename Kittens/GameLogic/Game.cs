@@ -6,31 +6,35 @@ namespace GameLogic
     public class Game
     {
 
-        /* public List<Card> Deck = new List<Card>() {
+        public List<Card> Deck = new List<Card>() {
              Cards.cards["Defuse"], Cards.cards["Defuse"], Cards.cards["Defuse"], Cards.cards["Defuse"],
              Cards.cards["Attack"], Cards.cards["Attack"], Cards.cards["Attack"], Cards.cards["Attack"],
              Cards.cards["Skip"], Cards.cards["Skip"], Cards.cards["Skip"],  Cards.cards["Skip"],
              Cards.cards["Shuffle"], Cards.cards["Shuffle"], Cards.cards["Shuffle"], Cards.cards["Shuffle"],
              Cards.cards["Steal"], Cards.cards["Steal"], Cards.cards["Steal"], Cards.cards["Steal"],
              Cards.cards["See the future"], Cards.cards["See the future"], Cards.cards["See the future"], Cards.cards["See the future"], Cards.cards["See the future"],
-         };*/
+         };
 
-        public List<Card> Deck = new List<Card>() {
-            Cards.cards["Defuse"], Cards.cards["Defuse"], 
-            Cards.cards["Attack"], Cards.cards["Attack"], 
-            Cards.cards["Skip"], Cards.cards["Skip"], Cards.cards["Skip"],  
-            Cards.cards["Shuffle"], Cards.cards["Shuffle"], Cards.cards["Shuffle"], 
-            Cards.cards["Steal"], Cards.cards["Steal"], Cards.cards["Steal"], 
-            Cards.cards["See the future"], Cards.cards["See the future"], 
-        };
+        /*public List<Card> Deck = new List<Card>() {
+
+            //Cards.cards["Exploding Kitten"],
+            Cards.cards["Defuse"], Cards.cards["Defuse"],
+            Cards.cards["Attack"], Cards.cards["Attack"],
+            Cards.cards["Skip"], Cards.cards["Skip"], Cards.cards["Skip"],
+            Cards.cards["Shuffle"], Cards.cards["Shuffle"], Cards.cards["Shuffle"],
+            Cards.cards["Steal"], Cards.cards["Steal"], Cards.cards["Steal"],
+            Cards.cards["See the future"], Cards.cards["See the future"],
+        };*/
 
         public Stack<Card> Stack = new Stack<Card>();
 
-        public Dictionary<string,List<Card>> playersCards = new Dictionary<string,List<Card>>();
+        public Dictionary<string, List<Card>> playersCards = new Dictionary<string, List<Card>>();
 
-        public Game() 
+        public Game()
         {
             Shuffle();
+            Shuffle();
+            
         }
 
         public List<Card> GetCardsForPlayer()
@@ -46,7 +50,6 @@ namespace GameLogic
                 Deck.RemoveAt(newCard);
             }
             Shuffle();
-            playerCards.Add(Cards.typeCards[CardType.ExplodingKitten]);
             return playerCards;
         }
 

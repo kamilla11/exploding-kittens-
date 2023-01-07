@@ -28,8 +28,16 @@ public class ClientObject
         client = tcpClient;
         server = serverObject;
 
-        Task.Run((Action)ProcessIncomingPackets);
-        Task.Run((Action)SendPackets);
+        try
+        {
+            Task.Run((Action)ProcessIncomingPackets);
+            Task.Run((Action)SendPackets);
+        }
+        catch(Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
+        
     }
 
 
@@ -126,18 +134,34 @@ public class ClientObject
     {
         var card = Game.Deck[0];
         Game.Deck.RemoveAt(0);
+        var lastCardName = Game.Stack.TryPeek(out _) ? Game.Stack.Peek().Name : "";
         if (card.Type != CardType.ExplodingKitten)
         {
             Game.playersCards[Id].Add(card);
-            SendPacketPlayerState(Game.Stack.Peek().Name, true);
+            SendPacketPlayerState(lastCardName, true);
         }
         else
         {
-            QueuePacketSend(PacketConverter.Serialize(PacketType.ExplodingKitten, new PacketExplodingKitten() { State = State.Lose }).ToPacket());
-            var otherClient = server._clients.Where(c => c.Id != Id).First();
-            otherClient.QueuePacketSend(PacketConverter.Serialize(PacketType.ExplodingKitten, new PacketExplodingKitten() { State = State.Win }).ToPacket());
+            if (Game.playersCards[Id].Where(card => card.Type == CardType.Defuse).FirstOrDefault() != null)
+            {
+                Game.playersCards[Id].RemoveAt(Game.playersCards[Id].FindIndex(card => card.Type == CardType.Defuse));
+                Game.Deck.Add(card);
+                Game.Shuffle();
+                SendPacketPlayerState(lastCardName, true);
+            }
+            else
+            {
+                foreach (var client in server._clients)
+                {
+                    if (client.Id == Id) client.QueuePacketSend(PacketConverter.Serialize( PacketType.EndGame, new PacketEndGame() { State = State.Lose }).ToPacket());
+                    else client.QueuePacketSend(PacketConverter.Serialize(PacketType.EndGame, new PacketEndGame() { State = State.Win }).ToPacket());
+                }
+            }
+                
         }
     }
+
+    
 
 
     public void ProcessIncomingPackets()

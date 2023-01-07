@@ -112,20 +112,16 @@ public partial class GameViewModel: BaseViewModel
     [RelayCommand]
     public void CardDropedToReset()
     {
-        if(_draggedCard.Type != CardType.Back)
-        {
             _client.QueuePacketSend(PacketConverter.Serialize(PacketType.ActionCard, new PacketActionCard() { ActionCard = _draggedCard.Name }).ToPacket());
-        }
+        
     }
 
     //в свои карты
     [RelayCommand]
     public void BackCardDroped()
     {
-        if (_draggedCard.Type == CardType.Back)
-        {
-            _client.QueuePacketSend(PacketConverter.Serialize(PacketType.TakeCard, new PacketTakeCard() { Test = 0 }).ToPacket());
-        }
+        _client.QueuePacketSend(PacketConverter.Serialize(PacketType.TakeCard, new PacketTakeCard() { Test = 0 }).ToPacket());
+       
     }
 
     
@@ -181,6 +177,9 @@ public partial class GameViewModel: BaseViewModel
             case PacketType.PlayerState:
                 ProcessPlayerState(packet);
                 break;
+            case PacketType.EndGame:
+                ProcessEndGame(packet);
+                break;
             case PacketType.Unknown:
                 break;
             
@@ -196,6 +195,11 @@ public partial class GameViewModel: BaseViewModel
         _otherCardsCount = playerState.OtherPlayerCardsCount;
         LastResetCard = Cards.typeCards[playerState.LastResetCard];
         Update();
+    }
+    private void ProcessEndGame(Packet packet)
+    {
+        var playerState = PacketConverter.Deserialize<PacketEndGame>(packet);
+        //_client._socket.Close();
     }
 
     private void ProcessSeeTheFuture(Packet packet)

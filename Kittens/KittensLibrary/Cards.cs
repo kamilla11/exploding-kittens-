@@ -40,6 +40,7 @@ namespace KittensLibrary
                  { "Shuffle", new Card("Shuffle", CardType.Shuffle, "shuffle.jpeg")},
                  { "Steal", new Card("Steal", CardType.Steal, "steal.jpeg")},
                  { "See the future", new Card("See the future", CardType.SeeTheFuture, "see_future.jpeg")},
+                 { "", new Card("", CardType.None, "")}
              };
 
         public readonly static Dictionary<CardType, Card> typeCards = new()
@@ -51,6 +52,7 @@ namespace KittensLibrary
                  { CardType.Shuffle, new Card("Shuffle", CardType.Shuffle, "shuffle.jpeg")},
                  { CardType.Steal, new Card("Steal", CardType.Steal, "steal.jpeg")},
                  { CardType.SeeTheFuture, new Card("See the future", CardType.SeeTheFuture, "see_future.jpeg")},
+                 {CardType.None, new Card("", CardType.None, "") }
              };
 
     }
