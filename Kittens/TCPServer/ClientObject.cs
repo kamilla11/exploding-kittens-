@@ -60,7 +60,7 @@ public class ClientObject
         var actionCard = PacketConverter.Deserialize<PacketActionCard>(packet);
         Game.Stack.Push(Cards.cards[actionCard.ActionCard]);
         Game.playersCards[Id].RemoveAt(Game.playersCards[Id].FindIndex(0, Game.playersCards[Id].Count, card => card.Name == actionCard.ActionCard));
-
+        Console.WriteLine(1);
 
         switch (actionCard.ActionCard)
         {
@@ -82,6 +82,7 @@ public class ClientObject
     public void ProcessSkip(string cardName)
     {
         SendPacketPlayerState(cardName, true);
+        
     }
 
     public void ProcessSteal(string cardName)
@@ -132,6 +133,7 @@ public class ClientObject
     }
     public void ProcessTakeCard()
     {
+
         var card = Game.Deck[0];
         Game.Deck.RemoveAt(0);
         var lastCardName = Game.Stack.TryPeek(out _) ? Game.Stack.Peek().Name : "";

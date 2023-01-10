@@ -74,8 +74,7 @@
                                        WidthRequest="150"
                                        HeightRequest="200">
                                                     <Image.GestureRecognizers>
-                                                        <DragGestureRecognizer DragStartingCommand="{Binding Source={x:RelativeSource AncestorType={x:Type viewmodel:GameViewModel}}, Path=DragBackStartedCommand}"
-                                 DragStartingCommandParameter="{Binding .}"/>
+                                                        <TapGestureRecognizer NumberOfTapsRequired="2" Command="{Binding Source={x:RelativeSource AncestorType={x:Type viewmodel:GameViewModel}}, Path=BackCard_TappedCommand}"  />
                                                     </Image.GestureRecognizers>
                                                 </Image>
                                             </Grid>
@@ -96,9 +95,6 @@
 
                             <Frame Padding="0" HeightRequest="200">
                                 <Image Source="{Binding LastResetCard.Img}" HeightRequest="200" WidthRequest="150"></Image>
-                                <Frame.GestureRecognizers>
-                                    <DropGestureRecognizer DropCommand="{Binding CardDropedToResetCommand}" />
-                                </Frame.GestureRecognizers>
                             </Frame>
 
                         </HorizontalStackLayout>
@@ -111,9 +107,6 @@
                                 <SolidColorBrush Color="LightGray"/>
                             </Frame.Background>
 
-                            <Frame.GestureRecognizers>
-                                <DropGestureRecognizer DropCommand="{Binding Source={x:RelativeSource AncestorType={x:Type viewmodel:GameViewModel}}, Path=BackCardDropedCommand}" />
-                            </Frame.GestureRecognizers>
 
                          <!--   <CollectionView
             ItemsSource="{Binding PlayerCards}"
@@ -150,8 +143,7 @@
                                        WidthRequest="100"
                                        HeightRequest="180">
                                                     <Image.GestureRecognizers>
-                                                        <DragGestureRecognizer DragStartingCommand="{Binding Source={x:RelativeSource AncestorType={x:Type viewmodel:GameViewModel}}, Path=DragStartedCommand}"
-                                                                    DragStartingCommandParameter="{Binding .}"/>
+                                                        <TapGestureRecognizer NumberOfTapsRequired="2" CommandParameter="{Binding .}" Command="{Binding Source={x:RelativeSource AncestorType={x:Type viewmodel:GameViewModel}}, Path=PlayerCard_TappedCommand}"  />
                                                     </Image.GestureRecognizers>
                                                 </Image>
                                             </Grid>

@@ -70,6 +70,7 @@ public class ServerObject
             {
                 _clients.Add(c);
                 Task.Run(c.ProcessIncomingPackets);
+                
             }
             else
             {

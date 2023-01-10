@@ -29,6 +29,7 @@ public partial class GamePage : ContentPage
         _gameViewModel.DisableTrueUI += DisableTrue;
         _gameViewModel.LoseUi += Lose;
         _gameViewModel.WinUI += Win;
+        _gameViewModel.ThirdClientUI += ThirdClient;
     }
 
     private void OnOkClickedAsync(object sender, EventArgs e)
@@ -57,6 +58,11 @@ public partial class GamePage : ContentPage
     public void DisableTrue()
     {
         gameField.IsEnabled = true;
+    }
+
+    public void ThirdClient()
+    {
+        DisplayAlert("Вы третий лишний!", "Закройте это окно", "ок");
     }
 
     /* public void SeeTheFuture(Card card1, Card card2, Card card3)

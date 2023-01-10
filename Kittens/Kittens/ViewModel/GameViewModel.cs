@@ -10,6 +10,7 @@ using Protocol;
 using Protocol.Packets;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Maui.Core.Extensions;
+/*using System.Reactive.Windows.Threading; */
 
 namespace Kittens.ViewModel;
 
@@ -29,6 +30,7 @@ public partial class GameViewModel: BaseViewModel
     public event Action DisableTrueUI;
     public event Action LoseUi;
     public event Action WinUI;
+    public event Action ThirdClientUI;
 
     private Client _client;
     private Player _player;
@@ -62,20 +64,23 @@ public partial class GameViewModel: BaseViewModel
         if (_player.State == State.Play)
         {
             Title =  $"{_player.Nickname} ходит";
-            DisableTrueUI();
+            Shell.Current.Dispatcher.Dispatch(DisableTrueUI);
         }
         else if (_player.State == State.Wait)
         {
             Title = $"{_player.Nickname} ожидает";
-            DisableFalseUI();
+            Shell.Current.Dispatcher.Dispatch(DisableFalseUI);
         }
         else if (_player.State == State.Win)
         {
-            WinUI();
+            Shell.Current.Dispatcher.Dispatch(WinUI);
+          //  WinUI();
         }
         else if (_player.State == State.Lose)
         {
-            LoseUi();
+            Shell.Current.Dispatcher.Dispatch(LoseUi);
+
+          //  LoseUi();
         }
 
             /* PlayerCards = _player.Cards.Select(card => Cards.typeCards[card]).ToObservableCollection();*/
@@ -94,37 +99,50 @@ public partial class GameViewModel: BaseViewModel
            
     }
 
-   
     [RelayCommand]
-    public void DragStarted(Card card)
+    public void PlayerCard_Tapped(Card card)
     {
-        _draggedCard = card;
+        _client.QueuePacketSend(PacketConverter.Serialize(PacketType.ActionCard, new PacketActionCard() { ActionCard = card.Name }).ToPacket());
     }
 
-    
     [RelayCommand]
-    public void DragBackStarted(Card card)
-    {
-        _draggedCard = card;
-    }
-
-    //в сброс
-    [RelayCommand]
-    public void CardDropedToReset()
-    {
-            _client.QueuePacketSend(PacketConverter.Serialize(PacketType.ActionCard, new PacketActionCard() { ActionCard = _draggedCard.Name }).ToPacket());
-        
-    }
-
-    //в свои карты
-    [RelayCommand]
-    public void BackCardDroped()
+    public void BackCard_Tapped()
     {
         _client.QueuePacketSend(PacketConverter.Serialize(PacketType.TakeCard, new PacketTakeCard() { Test = 0 }).ToPacket());
-       
     }
 
-    
+    /*
+     [RelayCommand]
+     public void DragStarted(Card card)
+     {
+
+         _draggedCard = card;
+     }
+
+
+     [RelayCommand]
+     public void DragBackStarted(Card card)
+     {
+         _draggedCard = card;
+     }
+
+     //в сброс
+     [RelayCommand]
+     public void CardDropedToReset()
+     {
+             _client.QueuePacketSend(PacketConverter.Serialize(PacketType.ActionCard, new PacketActionCard() { ActionCard = _draggedCard.Name }).ToPacket());
+
+     }
+
+     //в свои карты
+     [RelayCommand]
+     public void BackCardDroped()
+     {
+         _client.QueuePacketSend(PacketConverter.Serialize(PacketType.TakeCard, new PacketTakeCard() { Test = 0 }).ToPacket());
+
+     }*/
+
+
     //[RelayCommand]
     //void UpdateCards()
     //{
@@ -199,6 +217,10 @@ public partial class GameViewModel: BaseViewModel
     private void ProcessEndGame(Packet packet)
     {
         var playerState = PacketConverter.Deserialize<PacketEndGame>(packet);
+        _player.State = playerState.State;
+        Update();
+      /*  if (playerState.State == State.Win) Dispatcher. (()=> WinUI());
+        else LoseUi();*/
         //_client._socket.Close();
     }
 
@@ -214,7 +236,8 @@ public partial class GameViewModel: BaseViewModel
     private void ProcessFailConnect(Packet packet)
     {
         var failConnect = PacketConverter.Deserialize<PacketFailConnect>(packet);
-        Status = $"{failConnect.Exception}";
+        Shell.Current.Dispatcher.Dispatch(ThirdClientUI);
+
     }
 
     private void ProcessStartGame(Packet packet)
