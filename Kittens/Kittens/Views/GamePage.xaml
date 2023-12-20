@@ -1,14 +1,227 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:viewmodel="clr-namespace:Kittens.ViewModel"
+             xmlns:viewmodel="clr-namespace:Kittens.ViewModel" 
+             xmlns:model="clr-namespace:KittensLibrary;assembly=KittensLibrary"
              x:DataType="viewmodel:GameViewModel"
              x:Class="Kittens.Views.GamePage"
              Title="{Binding Title}">
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+    <Shell.BackButtonBehavior>
+        <BackButtonBehavior IsEnabled="False" IsVisible="False"/>
+    </Shell.BackButtonBehavior>
+    
+    <ScrollView >
+        <Grid x:Name="gameField">
+            <Image Source="background3.png"
+                   Aspect="AspectFill"
+                   SemanticProperties.Description="Background" />
+            
+            <VerticalStackLayout
+        HorizontalOptions="Center"
+        VerticalOptions="Fill" >
+
+                <Grid
+           BackgroundColor="#660c0c"
+            x:Name="table">
+                    <VerticalStackLayout Margin="20" Spacing="20" >
+
+
+                        <VerticalStackLayout >
+                            <Image Source="player.png" WidthRequest="130" HeightRequest="130"></Image>
+
+                           
+                                <CollectionView
+            ItemsSource="{Binding OtherPlayerCards}"
+            SelectionMode="None"
+                                    ItemsLayout="HorizontalList">
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate x:DataType="model:Card">
+
+                                        <Frame Padding="0">
+                                            <Grid>
+                                                    <Image Aspect="AspectFill" Source="{Binding Img}"
+                                       WidthRequest="50"
+                                       HeightRequest="70"/>
+                                                </Grid>
+                                            </Frame>
+                                      
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView>
+                          
+
+                        </VerticalStackLayout>
+
+
+                        <HorizontalStackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="40" >
+
+                            <CollectionView
+                                ItemsSource="{Binding BackCard}"
+                                 SelectionMode="None">
+
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate x:DataType="model:Card">
+                                        <Frame Padding="0" HeightRequest="200">
+                                           
+                                            <Grid>
+                                                <Image Aspect="AspectFill" Source="{Binding Img}"
+                                       WidthRequest="150"
+                                       HeightRequest="200">
+                                                    <Image.GestureRecognizers>
+                                                        <DragGestureRecognizer DragStartingCommand="{Binding Source={x:RelativeSource AncestorType={x:Type viewmodel:GameViewModel}}, Path=DragBackStartedCommand}"
+                                 DragStartingCommandParameter="{Binding .}"/>
+                                                    </Image.GestureRecognizers>
+                                                </Image>
+                                            </Grid>
+                                        </Frame>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView>
+
+                       <!--      <Frame Padding="0">
+                                <Image Source="card_back.png" HeightRequest="200" WidthRequest="100"></Image>
+                                <Frame.GestureRecognizers>
+                                    <DragGestureRecognizer DragStartingCommand="{Binding Source={x:RelativeSource AncestorType={x:Type viewmodel:GameViewModel}}, Path=DragBackStartedCommand}"
+                                 DragStartingCommandParameter="{Binding .}"/>
+                                </Frame.GestureRecognizers>
+
+                            </Frame> -->
+
+
+                            <Frame Padding="0" HeightRequest="200">
+                                <Image Source="{Binding LastResetCard.Img}" HeightRequest="200" WidthRequest="150"></Image>
+                                <Frame.GestureRecognizers>
+                                    <DropGestureRecognizer DropCommand="{Binding CardDropedToResetCommand}" />
+                                </Frame.GestureRecognizers>
+                            </Frame>
+
+                        </HorizontalStackLayout>
+
+
+                        <Frame BorderColor="LightGray"
+                       HasShadow="True"
+                       CornerRadius="12">
+                            <Frame.Background>
+                                <SolidColorBrush Color="LightGray"/>
+                            </Frame.Background>
+
+                            <Frame.GestureRecognizers>
+                                <DropGestureRecognizer DropCommand="{Binding Source={x:RelativeSource AncestorType={x:Type viewmodel:GameViewModel}}, Path=BackCardDropedCommand}" />
+                            </Frame.GestureRecognizers>
+
+                         <!--   <CollectionView
+            ItemsSource="{Binding PlayerCards}"
+            SelectionMode="None"
+                                ItemsLayout="HorizontalList">
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate x:DataType="model:Card">
+                                        <Frame Padding="0" HeightRequest="200">
+                                            <Frame.GestureRecognizers>
+                                                <DragGestureRecognizer DragStartingCommand="{Binding Source={x:RelativeSource AncestorType={x:Type viewmodel:GameViewModel}}, Path=DragStartedCommand}"
+                                                                    DragStartingCommandParameter="{Binding .}"/>
+                                            </Frame.GestureRecognizers>
+                                            <Grid>
+                                                <Image Aspect="AspectFill" Source="{Binding Img}"
+                                       WidthRequest="100"
+                                       HeightRequest="200"/>
+                                            </Grid>
+                                        </Frame>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView> -->
+
+                            <CollectionView
+            ItemsSource="{Binding PlayerCards}"
+            SelectionMode="None"
+                                    ItemsLayout="HorizontalList">
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate x:DataType="model:Card">
+
+                                        <Frame Padding="0">
+                                           
+                                            <Grid>
+                                                <Image x:Name="playerCardImg" Aspect="AspectFill" Source="{Binding Img}"
+                                       WidthRequest="100"
+                                       HeightRequest="180">
+                                                    <Image.GestureRecognizers>
+                                                        <DragGestureRecognizer DragStartingCommand="{Binding Source={x:RelativeSource AncestorType={x:Type viewmodel:GameViewModel}}, Path=DragStartedCommand}"
+                                                                    DragStartingCommandParameter="{Binding .}"/>
+                                                    </Image.GestureRecognizers>
+                                                </Image>
+                                            </Grid>
+                                        </Frame>
+
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView>
+
+
+                            <!--    <CollectionView>
+                        <CollectionView.ItemsSource>
+                            <x:Array Type="{x:Type model:Card}">
+                                <model:Card
+                                    Name="Exploding Kitten"
+                                    Img ="cards/exploding_kitten.png" />
+                            </x:Array>
+                        </CollectionView.ItemsSource>
+                        
+                        
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="model:Card">
+                                <HorizontalStackLayout  HorizontalOptions="Center">
+                                    <Frame HeightRequest="125">
+                                        <Frame.GestureRecognizers>
+                                            <DragGestureRecognizer DragStartingCommand="{Binding Source={x:RelativeSource AncestorType={x:Type viewmodel:GameViewModel}}, Path=DragStartedCommand}"
+                                                                   DragStartingCommandParameter="{Binding .}"/>
+                                        </Frame.GestureRecognizers>
+                                        <Grid>
+                                            <Image Aspect="AspectFill" Source="{Binding Img}"
+                                       WidthRequest="100"
+                                       HeightRequest="200"/>
+                                        </Grid>
+                                    </Frame>
+                                </HorizontalStackLayout>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView> -->
+                        </Frame>
+
+                    </VerticalStackLayout>
+                </Grid>
+
+
+                <Border Padding="20" WidthRequest="250" StrokeShape="RoundRectangle 10" x:Name="login_form">
+
+                    <VerticalStackLayout Spacing="10"
+                VerticalOptions="Center"
+                HorizontalOptions="Center">
+                        <Label
+                    FontSize="20"
+                    Text="Введите данные"
+                    VerticalOptions="Center" 
+                    HorizontalOptions="Center" />
+                        <Entry
+                    x:Name="NicknameEntr"
+                    Placeholder="никнэйм"/>
+                        <Entry
+                    x:Name="EmailEntr"
+                    Placeholder="почта"/>
+                        <Button Text="Ok" FontSize="17" Clicked="OnOkClickedAsync"></Button>
+                    </VerticalStackLayout>
+                </Border>
+                <!--  <VerticalStackLayout Spacing="10"
+                VerticalOptions="Center"
+                HorizontalOptions="Center">
+            <Label
+                    FontSize="20"
+                    Text="{Binding Status}"
+                    VerticalOptions="Center" 
+                    HorizontalOptions="Center" />
+        </VerticalStackLayout>-->
+
+            </VerticalStackLayout>
+       
+    </Grid>
+    </ScrollView>
+
 </ContentPage>

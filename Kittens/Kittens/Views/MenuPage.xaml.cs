@@ -8,13 +8,14 @@ public partial class MenuPage : ContentPage
 		InitializeComponent();
 	}
 
-    private void OnStartGameClicked(object sender, EventArgs e)
+    private async void OnStartGameClicked(object sender, EventArgs e)
     {
-        Shell.Current.GoToAsync(nameof(GamePage), true);
+       await Shell.Current.GoToAsync(nameof(GamePage), true);
     }
-    private void OnRulesClicked(object sender, EventArgs e)
+
+    private async void OnRulesClicked(object sender, EventArgs e)
     {
-        Shell.Current.GoToAsync(nameof(RulesPage), true);
+       await Shell.Current.GoToAsync(nameof(RulesPage), true);
     }
 }
 

@@ -51,9 +51,12 @@
 	<ItemGroup>
 	  <None Remove="Model\" />
 	  <None Remove="CommunityToolkit.Mvvm" />
+	  <None Remove="Resources\Images\" />
+	  <None Remove="CommunityToolkit.Maui" />
 	</ItemGroup>
 	<ItemGroup>
 	  <Folder Include="Model\" />
+	  <Folder Include="Resources\Images\" />
 	</ItemGroup>
 	<ItemGroup>
 	  <MauiXaml Update="Views\RulesPage.xaml">
@@ -68,11 +71,16 @@
 	  <MauiXaml Update="Views\MainPage.xaml">
 	    <SubType></SubType>
 	  </MauiXaml>
-	</ItemGroup>
-	<ItemGroup>
-	  <BundleResource Include="Resources\Images\rule6.png" />
+	  <MauiXaml Update="Views\FuturePopUpPage.xaml">
+	    <SubType></SubType>
+	  </MauiXaml>
 	</ItemGroup>
 	<ItemGroup>
 	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.0.0" />
+	  <PackageReference Include="CommunityToolkit.Maui" Version="2.0.0" />
+	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\KittensLibrary\KittensLibrary.csproj" />
+	  <ProjectReference Include="..\Protocol\Protocol.csproj" />
 	</ItemGroup>
 </Project>
